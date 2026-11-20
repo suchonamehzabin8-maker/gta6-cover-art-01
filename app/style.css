@@ -1,217 +1,216 @@
-/* Vice Coast Cover Studio — editor styles, written fresh in this session.
-   A dark neon editor: deep purple panels, sunset-pink accents, Anton for
-   headings. The cover itself is drawn on canvas; this file only styles
-   the page around it. */
-
-@font-face { font-family: 'Anton'; src: url('./fonts/Anton-Regular.ttf') format('truetype'); font-display: swap; }
-@font-face { font-family: 'Pacifico'; src: url('./fonts/Pacifico-Regular.ttf') format('truetype'); font-display: swap; }
+/* Vice Coast Cover Studio — dark neon editor chrome. The cover itself is
+   painted on canvas; this file only styles the page around it. */
 
 :root {
-  --ink: #f4eefc;
-  --muted: #c9b8e0;
-  --panel: #1d1030;
-  --panel-2: #2a1844;
-  --line: #4a2d73;
+  --ink: #f2eef8;
+  --ink-dim: #b9aec9;
+  --page: #14081f;
+  --card: #21102e;
+  --card-line: #3c2152;
   --accent: #ff2e88;
-  --accent-2: #ffd166;
-  --bg: #0e0618;
+  --accent-soft: #ff7ad9;
+  --gold: #ffd76e;
+  --field: #160a24;
 }
 
 * { box-sizing: border-box; }
 
-body {
+html, body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100%;
+  background: var(--page);
   color: var(--ink);
-  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  font: 15px/1.45 "Liberation Sans", "Noto Sans", Arial, sans-serif;
 }
 
-button, input, select { font: inherit; color: inherit; }
-button:focus-visible, input:focus-visible, select:focus-visible {
-  outline: 2px solid var(--accent-2);
-  outline-offset: 2px;
-}
-kbd {
-  font: 12px/1.4 ui-monospace, monospace;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-bottom-width: 2px;
-  border-radius: 4px;
-  padding: 1px 5px;
-}
-
-/* Header bar: gradient sunset, big Anton title. */
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 18px 24px;
-  background: linear-gradient(90deg, #2b0f3d, #4a1145 55%, #7b2ff7);
-  border-bottom: 3px solid var(--accent);
+  padding: 18px 28px 8px;
+  border-bottom: 1px solid var(--card-line);
 }
+
 .topbar h1 {
   margin: 0;
-  font-family: Anton, "Arial Narrow", sans-serif;
-  font-weight: 400;
-  font-size: 34px;
+  font-size: 26px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  background: linear-gradient(90deg, var(--gold), var(--accent-soft), #54e0ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-.topbar h1 span { color: var(--accent-2); }
-.topbar p { margin: 4px 0 0; color: #f8d7ec; max-width: 560px; }
-.top-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 6px; }
 
-/* Two-column editor: controls left, sticky preview right. */
-.app {
+.topbar p { margin: 4px 0 0; color: var(--ink-dim); }
+
+.studio {
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 20px;
-  padding: 20px 24px 32px;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 24px;
+  padding: 20px 28px 32px;
   align-items: start;
 }
-.controls {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 16px 18px;
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--card-line);
+  border-radius: 14px;
+  padding: 18px;
 }
-.controls h2 {
+
+.panel h2 {
   margin: 20px 0 8px;
-  font-family: Anton, "Arial Narrow", sans-serif;
-  font-weight: 400;
-  font-size: 19px;
-  letter-spacing: 0.05em;
-  color: var(--accent-2);
+  font-size: 13px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-}
-.controls h2:first-child { margin-top: 0; }
-.controls h3 { margin: 12px 0 6px; font-size: 15px; }
-.hint { color: var(--muted); margin: 0 0 10px; font-size: 13.5px; }
-.fine { color: var(--muted); font-size: 12.5px; margin: 14px 0 0; }
-
-label { display: block; margin: 8px 0; font-size: 14px; }
-label input[type="text"],
-label select {
-  display: block;
-  width: 100%;
-  margin-top: 4px;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--panel-2);
-  color: var(--ink);
-}
-label input[type="range"] { display: block; width: 100%; accent-color: var(--accent); }
-label.check { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
-label.check input { accent-color: var(--accent); width: 16px; height: 16px; }
-
-.file-label {
-  display: block;
-  margin: 10px 0;
-  padding: 10px;
-  text-align: center;
-  border: 1px dashed var(--accent);
-  border-radius: 8px;
-  cursor: pointer;
-}
-.file-label input { display: none; }
-
-button {
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-button:hover { border-color: var(--accent); }
-button.primary { background: var(--accent); border-color: var(--accent); font-weight: 700; }
-button.active { background: var(--accent); border-color: var(--accent-2); font-weight: 700; }
-
-.choices { display: flex; flex-wrap: wrap; gap: 6px; }
-.choices button { padding: 6px 10px; font-size: 13.5px; }
-.swatches button::before {
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--sw, #888);
-  margin-right: 6px;
-  vertical-align: -1px;
+  color: var(--gold);
 }
 
-.slots { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-.slot {
-  position: relative;
-  min-height: 64px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--panel-2);
+.panel h2:first-child { margin-top: 0; }
+
+.field {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-.slot .name {
-  position: relative;
-  z-index: 1;
-  font-size: 12px;
-  background: rgba(14, 6, 24, 0.75);
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-.slot button {
-  position: absolute;
-  z-index: 2;
-  top: 4px;
-  right: 4px;
-  padding: 2px 7px;
-  font-size: 12px;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+  font-weight: 700;
+  font-size: 13px;
 }
 
-.panel-edit {
-  border-top: 1px solid var(--line);
-  margin-top: 12px;
-  padding-top: 4px;
-}
-.panel-row { display: flex; gap: 10px; align-items: end; }
-.panel-row button { flex: 0 0 auto; }
-.panel-row label { flex: 1; margin: 8px 0; }
-
-.export-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-#status { min-height: 1.4em; color: var(--accent-2); margin: 10px 0 0; }
-
-.preview { position: sticky; top: 16px; }
-.preview canvas {
-  display: block;
-  width: 100%;
-  max-width: 760px;
-  height: auto;
-  border: 3px solid #fff;
-  outline: 2px solid #12081f;
-  border-radius: 4px;
-  cursor: crosshair;
-  background: #12081f;
+.field input[type="text"],
+.field select {
+  font: inherit;
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--field);
+  border: 1px solid var(--card-line);
+  border-radius: 8px;
+  padding: 9px 10px;
 }
 
-/* Screenshot mode: cover only, no editor chrome. */
-body.shot-cover .topbar,
-body.shot-cover .controls,
-body.shot-cover .preview .hint { display: none; }
-body.shot-cover { background: #12081f; }
-body.shot-cover .app { display: block; padding: 0; }
-body.shot-cover .preview { position: static; }
-body.shot-cover .preview canvas {
-  width: 100%;
-  max-width: none;
+.field input[type="text"]:focus,
+.field select:focus,
+button:focus-visible {
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+
+.field input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+.note { margin: 6px 0; font-size: 13px; color: var(--ink-dim); }
+
+.picker { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.picker button,
+.row button,
+.stepper button {
+  font: inherit;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--field);
+  border: 1px solid var(--card-line);
+  border-radius: 8px;
+  padding: 8px 11px;
+  cursor: pointer;
+}
+
+.picker button:hover,
+.row button:hover,
+.stepper button:hover { border-color: var(--accent-soft); }
+
+.picker button.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+#gradeRow button.on { box-shadow: 0 0 0 2px var(--gold); }
+
+.checks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.checks label { display: flex; gap: 7px; align-items: center; font-size: 14px; }
+.checks input { accent-color: var(--accent); width: 16px; height: 16px; }
+
+.heatline { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-weight: 700; }
+.stars { display: flex; gap: 4px; }
+.stars button {
+  font-size: 22px;
+  line-height: 1;
+  padding: 2px 4px;
+  color: rgba(255, 255, 255, 0.3);
+  background: none;
   border: 0;
-  outline: 0;
+  cursor: pointer;
+}
+.stars button.on { color: var(--gold); }
+
+.stepper { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+.stepper span { flex: 1; text-align: center; font-weight: 700; }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+kbd {
+  font: 12px/1 "Liberation Sans", sans-serif;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+.preview {
+  position: sticky;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.preview h2 {
+  margin: 6px 0 0;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+#poster {
+  width: min(72vh, 100%);
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  cursor: crosshair;
+  background: #2a1140;
+}
+
+#status { margin: 0; color: var(--ink-dim); min-height: 1.4em; }
+
+/* Screenshot scenes: the cover alone, edge to edge. */
+body.shot-cover .topbar,
+body.shot-cover .panel,
+body.shot-cover .preview h2,
+body.shot-cover .preview .row,
+body.shot-cover .preview .picker,
+body.shot-cover .preview .note,
+body.shot-cover #status { display: none; }
+
+body.shot-cover { background: #000; }
+body.shot-cover .studio { display: block; padding: 0; }
+body.shot-cover .preview { position: static; }
+body.shot-cover #poster {
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto;
   border-radius: 0;
+  box-shadow: none;
+  cursor: default;
 }
 
 @media (max-width: 900px) {
-  .app { grid-template-columns: 1fr; }
+  .studio { grid-template-columns: 1fr; }
   .preview { position: static; }
 }
