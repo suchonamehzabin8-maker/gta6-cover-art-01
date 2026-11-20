@@ -8,11 +8,11 @@ Vice Coast Cover Studio — an offline browser app that turns your photos and a 
 
 ## What it does
 
-- **8 layouts**: Nine-Panel Grid, Hero + Three, Full-Bleed, Tilted Snapshots, Comic Strip, Four-Square, Diagonal Split, Poster Stack — panels are inked and white-framed like poster art, with a thin / normal / wide frame-gap control.
+- **10 layouts**: Nine-Panel Grid, Hero + Three, Full-Bleed, Tilted Snapshots, Comic Strip, Four-Square, Diagonal Split, Poster Stack, Split Screen, Marquee — panels are inked and white-framed like poster art, with a thin / normal / wide frame-gap control and optional drop shadows under the panels.
 - **Any photo**: add up to 4 of your own photos, or use the 4 samples. Click a panel in the preview to pick it, then crop it per panel — zoom, move left–right and up–down, mirror it, or switch it between fill (crop) and fit (whole photo).
-- **8 sunset grades**: Vice Sunset, Neon Night, Palm Gold, Miami Teal, Heat Haze, Noir Pink, Golden Hour, Midnight Vice — a gradient wash over every panel, on a sunset sky with a sun disc (and optional sun rays).
-- **Lettering**: title in Anton (condensed, sunset-gradient fill, bold outline you can toggle, halftone title block), neon-script subtitle in Pacifico, tagline, a 5-star heat meter, and a "LEONIDA · 2026" badge ribbon.
-- **Fast and easy**: pick a layout, a grade and a caption, then export — **1080 × 1080, 1080 × 1350, 1920 × 1080 and 1080 × 1920 PNGs**, one at a time, all four at once, or straight to the clipboard with Copy PNG. Undo, redo, shuffle and reset are built in. Grain and vignette are toggleable.
+- **10 sunset grades**: Vice Sunset, Neon Night, Palm Gold, Miami Teal, Heat Haze, Noir Pink, Golden Hour, Midnight Vice, Acid Lime, Rose Dusk — a gradient wash over every panel, on a sunset sky with a sun disc (and optional sun rays). Turn on the grade tint to wash the photos themselves in the grade colour.
+- **Lettering**: title in Anton (condensed, sunset-gradient fill, bold outline you can toggle, halftone title block), neon-script subtitle in Pacifico, tagline, a 5-star heat meter, a "LEONIDA · 2026" badge ribbon, and a starburst seal with your own shout ("DAY ONE", "NEW"...).
+- **Fast and easy**: pick a layout, a grade and a caption, then export — **1080 × 1080, 1080 × 1350, 1920 × 1080, 1080 × 1920 and 1200 × 630 PNGs**, one at a time, all five at once, or straight to the clipboard with Copy PNG. Undo, redo (keys U / R), shuffle and reset are built in. Grain and vignette are toggleable.
 - **Offline and private**: no network request, no upload — photos never leave the machine. Fonts are vendored (Anton + Pacifico, SIL OFL).
 
 ## Run it
@@ -32,10 +32,10 @@ mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
 ## Screenshots
 
-- `1-cover.jpg` — the nine-panel cover, exported at 1080 × 1080
-- `2-editor.jpg` — the editor with a photo loaded (Diagonal Split, Golden Hour)
-- `3-cover.jpg` — the Poster Stack cover, portrait 1080 × 1350, Midnight Vice
-- `4-editor.jpg` — the editor (Hero + Three, Neon Night, wide export)
+- `1-cover.jpg` — the Split Screen cover, Acid Lime, exported at 1080 × 1080
+- `2-editor.jpg` — the editor with a photo loaded (Marquee, Rose Dusk, sun rays + shadows)
+- `3-cover.jpg` — the nine-panel cover, portrait 1080 × 1350, Vice Sunset with grade tint + shadows
+- `4-editor.jpg` — the editor (Hero + Three, Neon Night, wide export, "NIGHT" seal)
 
 ## Originality
 
