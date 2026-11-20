@@ -1,8 +1,10 @@
-// Vice Coast Cover Studio — page wiring, rebuilt in this session.
-// Photos, layouts, grades, lettering, per-panel crop, undo/redo, export.
-// A `?shot=` query sets up a fixed scene for a screenshot instead
-// (./shots.js). Photos stay in the browser; nothing is ever uploaded.
-import { SIZES, GRADES, LAYOUTS, defaultState, paintCover, renderCover } from './cover.js';
+// Vice Coast Cover Studio — editor wiring, written fresh in this session.
+// Loads the samples, builds the layout / grade / size pickers, keeps the
+// controls in sync with the cover state, and handles undo/redo, per-panel
+// cropping, export and screenshots. Photos stay in the browser; nothing is
+// ever uploaded. A `?shot=` query sets up a fixed scene for a screenshot
+// instead (see shots.js).
+import { SIZES, GRADES, LAYOUTS, GAPS, defaultState, paintCover, renderCover } from './cover.js';
 import { runShot } from './shots.js';
 
 const SAMPLES = [
@@ -29,9 +31,9 @@ export function loadImage(url) {
   });
 }
 
-function snapshot() { return JSON.stringify(state); }
+const snap = () => JSON.stringify(state);
 function pushHistory() {
-  history.push(snapshot());
+  history.push(snap());
   if (history.length > 50) history.shift();
   future = [];
 }
@@ -42,18 +44,16 @@ function restore(json) {
 }
 function undo() {
   if (!history.length) return;
-  future.push(snapshot());
+  future.push(snap());
   restore(history.pop());
 }
 function redo() {
   if (!future.length) return;
-  history.push(snapshot());
+  history.push(snap());
   restore(future.pop());
 }
 
-function currentSize() {
-  return SIZES.find((s) => s.id === state.size) || SIZES[0];
-}
+const currentSize = () => SIZES.find((s) => s.id === state.size) || SIZES[0];
 
 function redraw() {
   const size = currentSize();
@@ -63,17 +63,25 @@ function redraw() {
   document.getElementById('size-label').textContent = `${size.w} × ${size.h}`;
 }
 
+// Every control that mirrors a piece of state, in one table, so adding a
+// control is one line: [element id, read state, write state].
 function syncControls() {
-  document.getElementById('title').value = state.title;
-  document.getElementById('subtitle').value = state.subtitle;
-  document.getElementById('tagline').value = state.tagline;
+  const text = (id, value) => { document.getElementById(id).value = value; };
+  const check = (id, value) => { document.getElementById(id).checked = value !== false; };
+  text('title', state.title);
+  text('subtitle', state.subtitle);
+  text('tagline', state.tagline);
+  text('burst', state.burst);
   document.getElementById('heat').value = String(state.heat);
   document.getElementById('gap').value = state.gap;
-  document.getElementById('grain').checked = state.grain !== false;
-  document.getElementById('vignette').checked = state.vignette !== false;
-  document.getElementById('frames').checked = state.frames !== false;
-  document.getElementById('outline').checked = state.outline !== false;
-  document.getElementById('rays').checked = state.rays === true;
+  check('grain', state.grain);
+  check('vignette', state.vignette);
+  check('frames', state.frames);
+  check('outline', state.outline);
+  check('rays', state.rays === true);
+  check('burstOn', state.burstOn);
+  check('tint', state.tint === true);
+  check('shadows', state.shadows === true);
   document.getElementById('panel-name').textContent = String(selectedPanel + 1);
   const sel = document.getElementById('panel-photo');
   sel.value = String(state.panelPhotos[selectedPanel] ?? 0);
@@ -83,9 +91,10 @@ function syncControls() {
   document.getElementById('oy').value = String(state.oy[selectedPanel] ?? 0);
   document.getElementById('flip').textContent = (state.flips[selectedPanel] ? '↔ Mirrored' : '↔ Mirror');
   document.getElementById('fit').value = state.fits[selectedPanel] ?? 'fill';
-  document.querySelectorAll('#layouts button').forEach((b) => b.classList.toggle('active', b.dataset.id === state.layout));
-  document.querySelectorAll('#grades button').forEach((b) => b.classList.toggle('active', b.dataset.id === state.grade));
-  document.querySelectorAll('#sizes button').forEach((b) => b.classList.toggle('active', b.dataset.id === state.size));
+  const markActive = (selector, id) => document.querySelectorAll(selector).forEach((b) => b.classList.toggle('active', b.dataset.id === id));
+  markActive('#layouts button', state.layout);
+  markActive('#grades button', state.grade);
+  markActive('#sizes button', state.size);
   renderSlots();
 }
 
@@ -132,51 +141,23 @@ function renderSlots() {
   });
 }
 
-function buildChoices() {
-  const lw = document.getElementById('layouts');
-  LAYOUTS.forEach((l) => {
+// One picker row per list: a button per entry, active one highlighted.
+function buildPicker(wrapId, entries, onPick, swatch = false) {
+  const wrap = document.getElementById(wrapId);
+  entries.forEach((entry) => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.dataset.id = l.id;
-    b.textContent = l.name;
-    b.title = l.desc;
+    b.dataset.id = entry.id;
+    b.textContent = entry.name || entry.label;
+    if (entry.desc) b.title = entry.desc;
+    if (swatch) b.style.setProperty('--sw', entry.stops[1]);
     b.addEventListener('click', () => {
       pushHistory();
-      state.layout = l.id;
-      selectedPanel = 0;
+      onPick(entry.id);
       syncControls();
       redraw();
     });
-    lw.append(b);
-  });
-  const gw = document.getElementById('grades');
-  GRADES.forEach((g) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.dataset.id = g.id;
-    b.textContent = g.name;
-    b.style.setProperty('--sw', g.stops[1]);
-    b.addEventListener('click', () => {
-      pushHistory();
-      state.grade = g.id;
-      syncControls();
-      redraw();
-    });
-    gw.append(b);
-  });
-  const sw = document.getElementById('sizes');
-  SIZES.forEach((s) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.dataset.id = s.id;
-    b.textContent = s.label;
-    b.addEventListener('click', () => {
-      pushHistory();
-      state.size = s.id;
-      syncControls();
-      redraw();
-    });
-    sw.append(b);
+    wrap.append(b);
   });
 }
 
@@ -190,12 +171,13 @@ function download(canvasEl, name) {
   }, 'image/png');
 }
 
-function fileName(size) {
-  return `vice-coast-${state.layout}-${state.grade}-${size.w}x${size.h}.png`;
-}
+const fileName = (size) => `vice-coast-${state.layout}-${state.grade}-${size.w}x${size.h}.png`;
 
 async function init() {
-  buildChoices();
+  buildPicker('layouts', LAYOUTS, (id) => { state.layout = id; selectedPanel = 0; });
+  buildPicker('grades', GRADES, (id) => { state.grade = id; }, true);
+  buildPicker('sizes', SIZES, (id) => { state.size = id; });
+
   // Load the four samples as the starting photos.
   for (const s of SAMPLES) {
     try {
@@ -232,9 +214,7 @@ async function init() {
   bindRange('zoom', 'zooms');
   bindRange('ox', 'ox');
   bindRange('oy', 'oy');
-  document.getElementById('zoom').addEventListener('change', pushHistory);
-  document.getElementById('ox').addEventListener('change', pushHistory);
-  document.getElementById('oy').addEventListener('change', pushHistory);
+  ['zoom', 'ox', 'oy'].forEach((id) => document.getElementById(id).addEventListener('change', pushHistory));
   document.getElementById('flip').addEventListener('click', () => {
     pushHistory();
     state.flips[selectedPanel] = !state.flips[selectedPanel];
@@ -253,6 +233,7 @@ async function init() {
   bindText('title', 'title');
   bindText('subtitle', 'subtitle');
   bindText('tagline', 'tagline');
+  bindText('burst', 'burst');
   document.getElementById('heat').addEventListener('change', (e) => {
     pushHistory();
     state.heat = Number(e.target.value);
@@ -273,6 +254,9 @@ async function init() {
   bindCheck('frames', 'frames');
   bindCheck('outline', 'outline');
   bindCheck('rays', 'rays');
+  bindCheck('burstOn', 'burstOn');
+  bindCheck('tint', 'tint');
+  bindCheck('shadows', 'shadows');
   document.getElementById('undo').addEventListener('click', undo);
   document.getElementById('redo').addEventListener('click', redo);
   document.getElementById('reset').addEventListener('click', () => {
@@ -301,7 +285,7 @@ async function init() {
       const c = renderCover(size.w, size.h, photos.map((p) => p.img), state);
       download(c, fileName(size));
     }, i * 400));
-    status.textContent = 'Exporting all 4 sizes — check your downloads.';
+    status.textContent = `Exporting all ${SIZES.length} sizes — check your downloads.`;
   });
   document.getElementById('copy-png').addEventListener('click', async () => {
     const size = currentSize();
@@ -315,13 +299,19 @@ async function init() {
       }
     }, 'image/png');
   });
+  // Keyboard: U undoes, R redoes (when not typing in a field).
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, select, textarea')) return;
+    if (e.key === 'u' || e.key === 'U') undo();
+    if (e.key === 'r' || e.key === 'R') redo();
+  });
   // Click a panel in the preview to select it for cropping.
   canvas.addEventListener('click', (e) => {
     const r = canvas.getBoundingClientRect();
     const fx = (e.clientX - r.left) / r.width;
     const fy = (e.clientY - r.top) / r.height;
     const layout = LAYOUTS.find((l) => l.id === state.layout) || LAYOUTS[0];
-    const gap = { thin: 0.008, normal: 0.016, wide: 0.032 }[state.gap] ?? 0.016;
+    const gap = GAPS[state.gap] ?? GAPS.normal;
     const { panels } = layout.build(gap);
     const hit = panels.findIndex((p) => fx >= p.x && fx <= p.x + p.w && fy >= p.y && fy <= p.y + p.h);
     if (hit >= 0) {
