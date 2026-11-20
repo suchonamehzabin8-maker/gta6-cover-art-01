@@ -1,57 +1,37 @@
-// Fixed scenes for screenshots: ?shot=editor shows the page with photos
-// loaded; ?shot=cover shows the cover alone, with the editor hidden.
-// Query params: photo (sample id), layout, grade, title, subtitle, size,
-// heat, gap, rays, outline, burst, burstOn, tint, shadows.
-// window.__shotReady is set once the fonts have loaded and the cover has
-// been painted, so a screenshot runner knows the scene is done.
-const SAMPLE_URL = {
-  'woman-car': 'samples/woman-car.jpg',
-  'man-rooftop': 'samples/man-rooftop.jpg',
-  boulevard: 'samples/boulevard.jpg',
-  pier: 'samples/pier.jpg',
-};
+// Fixed scenes for screenshots.
+//
+// `?shot=cover` paints the poster alone at the size the `w` and `h`
+// queries ask for (the exported cover, full-bleed in the viewport).
+// `?shot=editor` shows the editor with a photo already loaded.
+// Either way, `photo` picks the sample (samples/<photo>.jpg), `title` and
+// `subtitle` set the words, and `layout`, `grade`, `seal`, `rays`,
+// `shadows` and `tint` override the defaults. window.__shotReady is set
+// once the scene has painted, so a screenshot tool knows when to shoot.
 
-// How each query param maps onto the cover state: [param, state key, parse].
-// A missing param leaves the state alone; a present one overwrites it.
-const PARAMS = [
-  ['layout', 'layout', (v) => v],
-  ['grade', 'grade', (v) => v],
-  ['title', 'title', (v) => v],
-  ['subtitle', 'subtitle', (v) => v],
-  ['size', 'size', (v) => v],
-  ['heat', 'heat', (v) => Number(v)],
-  ['gap', 'gap', (v) => v],
-  ['burst', 'burst', (v) => v],
-  ['rays', 'rays', (v) => v === '1' || v === 'true'],
-  ['outline', 'outline', (v) => v === '1' || v === 'true'],
-  ['burstOn', 'burstOn', (v) => v === '1' || v === 'true'],
-  ['tint', 'tint', (v) => v === '1' || v === 'true'],
-  ['shadows', 'shadows', (v) => v === '1' || v === 'true'],
-];
-
-export async function runShot(shot, query, ctx) {
-  const { photos, state, apply, redraw } = ctx;
-  const patch = {};
-  for (const [param, key, parse] of PARAMS) {
-    const value = query.get(param);
-    if (value !== null && value !== '') patch[key] = parse(value);
-  }
-  apply(patch);
-  // Order the photos so the requested sample is first.
-  const first = query.get('photo');
-  if (first && SAMPLE_URL[first]) {
-    const idx = photos.findIndex((p) => p.img.src.includes(first));
-    if (idx > 0) {
-      const [p] = photos.splice(idx, 1);
-      photos.unshift(p);
+export async function runShot(shot, query, apply) {
+  const canvas = document.getElementById('poster');
+  if (shot === 'cover') {
+    document.body.classList.add('shot-cover');
+    const w = Number(query.get('w') ?? 0);
+    const h = Number(query.get('h') ?? 0);
+    if (w > 0 && h > 0) {
+      canvas.width = w;
+      canvas.height = h;
     }
   }
-  if (shot === 'cover') document.body.classList.add('shot-cover');
-  try {
-    await Promise.all([document.fonts.load('100px Anton'), document.fonts.load('40px Pacifico')]);
-  } catch {
-    // Fall back to system fonts.
-  }
-  redraw();
-  requestAnimationFrame(() => requestAnimationFrame(() => { window.__shotReady = true; }));
+  const words = {
+    title: query.get('title') ?? 'VICE COAST',
+    subtitle: query.get('subtitle') ?? 'Sunset Heist',
+    layout: query.get('layout') ?? null,
+    grade: query.get('grade') ?? null,
+    sealText: query.get('seal') ?? null,
+    rays: query.get('rays') === '1',
+    shadows: query.get('shadows') === '0' ? false : undefined,
+    tint: query.get('tint') === '0' ? false : undefined,
+  };
+  await apply(query.get('photo') ?? 'pier', words);
+  await new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+  window.__shotReady = true;
 }
