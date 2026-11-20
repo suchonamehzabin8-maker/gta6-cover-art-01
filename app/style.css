@@ -1,5 +1,5 @@
-/* Vice Coast Cover Studio — editor styles, rebuilt in this session.
-   Dark neon editor: deep purple panels, sunset-pink accents, Anton for
+/* Vice Coast Cover Studio — editor styles, written fresh in this session.
+   A dark neon editor: deep purple panels, sunset-pink accents, Anton for
    headings. The cover itself is drawn on canvas; this file only styles
    the page around it. */
 
@@ -26,6 +26,21 @@ body {
   font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
+button, input, select { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+kbd {
+  font: 12px/1.4 ui-monospace, monospace;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* Header bar: gradient sunset, big Anton title. */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -35,7 +50,6 @@ body {
   background: linear-gradient(90deg, #2b0f3d, #4a1145 55%, #7b2ff7);
   border-bottom: 3px solid var(--accent);
 }
-
 .topbar h1 {
   margin: 0;
   font-family: Anton, "Arial Narrow", sans-serif;
@@ -44,13 +58,11 @@ body {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-
 .topbar h1 span { color: var(--accent-2); }
-
 .topbar p { margin: 4px 0 0; color: #f8d7ec; max-width: 560px; }
-
 .top-actions { display: flex; gap: 8px; flex-wrap: wrap; padding-top: 6px; }
 
+/* Two-column editor: controls left, sticky preview right. */
 .app {
   display: grid;
   grid-template-columns: 380px 1fr;
@@ -58,14 +70,12 @@ body {
   padding: 20px 24px 32px;
   align-items: start;
 }
-
 .controls {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 16px 18px;
 }
-
 .controls h2 {
   margin: 20px 0 8px;
   font-family: Anton, "Arial Narrow", sans-serif;
@@ -75,12 +85,10 @@ body {
   color: var(--accent-2);
   text-transform: uppercase;
 }
-
 .controls h2:first-child { margin-top: 0; }
-
 .controls h3 { margin: 12px 0 6px; font-size: 15px; }
-
 .hint { color: var(--muted); margin: 0 0 10px; font-size: 13.5px; }
+.fine { color: var(--muted); font-size: 12.5px; margin: 14px 0 0; }
 
 label { display: block; margin: 8px 0; font-size: 14px; }
 label input[type="text"],
@@ -93,7 +101,6 @@ label select {
   border: 1px solid var(--line);
   background: var(--panel-2);
   color: var(--ink);
-  font: inherit;
 }
 label input[type="range"] { display: block; width: 100%; accent-color: var(--accent); }
 label.check { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
@@ -111,8 +118,6 @@ label.check input { accent-color: var(--accent); width: 16px; height: 16px; }
 .file-label input { display: none; }
 
 button {
-  font: inherit;
-  color: var(--ink);
   background: var(--panel-2);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -128,7 +133,8 @@ button.active { background: var(--accent); border-color: var(--accent-2); font-w
 .swatches button::before {
   content: "";
   display: inline-block;
-  width: 12px; height: 12px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--sw, #888);
   margin-right: 6px;
@@ -159,7 +165,8 @@ button.active { background: var(--accent); border-color: var(--accent-2); font-w
 .slot button {
   position: absolute;
   z-index: 2;
-  top: 4px; right: 4px;
+  top: 4px;
+  right: 4px;
   padding: 2px 7px;
   font-size: 12px;
 }
@@ -169,16 +176,12 @@ button.active { background: var(--accent); border-color: var(--accent-2); font-w
   margin-top: 12px;
   padding-top: 4px;
 }
-
 .panel-row { display: flex; gap: 10px; align-items: end; }
 .panel-row button { flex: 0 0 auto; }
 .panel-row label { flex: 1; margin: 8px 0; }
 
 .export-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-
 #status { min-height: 1.4em; color: var(--accent-2); margin: 10px 0 0; }
-
-.fine { color: var(--muted); font-size: 12.5px; margin: 14px 0 0; }
 
 .preview { position: sticky; top: 16px; }
 .preview canvas {
